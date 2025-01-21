@@ -1,0 +1,14 @@
+{
+  "users": [
+    { "_id": "user1", "name": "Joan Pérez", "email": "joanperez@mail.com", "reviews": ["review1", "review2"] },
+    { "_id": "user2", "name": "Maria López", "email": "marialopez@mail.com", "reviews": ["review3", "review4"] },
+    { "_id": "user3", "name": "Pau González", "email": "pau.gonzalez@mail.com", "reviews": ["review5"] },
+    { "_id": "user4", "name": "Laia Ruiz", "email": "laia.ruiz@mail.com", "reviews": ["review6", "review7"] },
+    { "_id": "user5", "name": "Oriol Martínez", "email": "oriol.martinez@mail.com", "reviews": ["review8"] },
+    { "_id": "user6", "name": "Eva Sánchez", "email": "eva.sanchez@mail.com", "reviews": ["review9"] },
+    { "_id": "user7", "name": "Jordi García", "email": "jordig@mail.com", "reviews": ["review10", "review11"] },
+    { "_id": "user8", "name": "Anna Torres", "email": "anna.torres@mail.com", "reviews": ["review12"] },
+    { "_id": "user9", "name": "Marc Díaz", "email": "marc.diaz@mail.com", "reviews": ["review13"] },
+    { "_id": "user10", "name": "Sofia Fernández", "email": "sofia.fernandez@mail.com", "reviews": ["review14", "review15"] }
+  ]
+}

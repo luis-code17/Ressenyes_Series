@@ -1,0 +1,8 @@
+{
+  "comments": [
+    { "_id": "comment1", "user_id": "user1", "review_id": "review1", "content": "Completament d'acord, és genial!", "date": "2025-01-20" },
+    { "_id": "comment2", "user_id": "user2", "review_id": "review2", "content": "És un clàssic!", "date": "2025-01-20" },
+    { "_id": "comment3", "user_id": "user3", "review_id": "review4", "content": "Totalment d'acord, un must.", "date": "2025-01-19" },
+    { "_id": "comment4", "user_id": "user4", "review_id": "review5", "content": "Jo també crec que és massa lent en algunes parts.", "date": "2025-01-18" }
+  ]
+}

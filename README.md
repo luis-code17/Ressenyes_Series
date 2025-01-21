@@ -79,3 +79,5 @@ Gestiona els comentaris sobre les ressenyes o sèries.
 
 4. **Sèries a Puntuacions (1:N)**  
    Cada sèrie pot tenir moltes puntuacions.
+---
+

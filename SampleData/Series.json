@@ -1,0 +1,15 @@
+{
+  "series": [
+    { "_id": "series1", "name": "Stranger Things", "release_date": "2016-07-15", "average_score": 8.5, "reviews": ["review1", "review2", "review3"] },
+    { "_id": "series2", "name": "Breaking Bad", "release_date": "2008-01-20", "average_score": 9.3, "reviews": ["review4", "review5"] },
+    { "_id": "series3", "name": "Game of Thrones", "release_date": "2011-04-17", "average_score": 8.9, "reviews": ["review6", "review7", "review8"] },
+    { "_id": "series4", "name": "The Office", "release_date": "2005-03-24", "average_score": 8.7, "reviews": ["review9", "review10"] },
+    { "_id": "series5", "name": "Friends", "release_date": "1994-09-22", "average_score": 8.9, "reviews": ["review11", "review12"] },
+    { "_id": "series6", "name": "The Mandalorian", "release_date": "2019-11-12", "average_score": 8.7, "reviews": ["review13", "review14"] },
+    { "_id": "series7", "name": "The Crown", "release_date": "2016-11-04", "average_score": 8.6, "reviews": ["review15"] },
+    { "_id": "series8", "name": "Westworld", "release_date": "2016-10-02", "average_score": 8.5, "reviews": ["review16"] },
+    { "_id": "series9", "name": "Black Mirror", "release_date": "2011-12-04", "average_score": 8.8, "reviews": ["review17"] },
+    { "_id": "series10", "name": "Narcos", "release_date": "2015-08-28", "average_score": 8.8, "reviews": ["review18", "review19"] }
+  ]
+
+}
