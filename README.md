@@ -6,7 +6,6 @@
   - [Usuaris (`users`)](#1-usuaris-users)
   - [Sèries (`series`)](#2-sèries-series)
   - [Ressenyes (`reviews`)](#3-ressenyes-reviews)
-  - [Comentaris (`comments`)](#4-comentaris-comments)
 - [Relacions Incloses](#relacions-incloses)
 ---
 
@@ -25,7 +24,8 @@ Contindrà la informació bàsica dels usuaris.
   - `_id`: Identificador únic de l'usuari.
   - `name`: Nom de l'usuari.
   - `email`: Correu electrònic de l'usuari.
-  - (Opcional) `reviews`: Array de referències a les seves ressenyes.
+  - `reviews`: Array de referències a les seves ressenyes.
+  - `password`: Contrasenya (Aquesta s'implementa només per simular el login com a gestor de sèries, no faria falta perquè només agafaríem les altres dades.)
 
 
 
@@ -36,7 +36,7 @@ Contindrà informació bàsica de les sèries.
   - `name`: Nom de la sèrie.
   - `release_date`: Data de llançament.
   - `average_score`: Puntuació mitjana de la sèrie.
-  - (Opcional) `reviews`: Array d'identificadors de ressenyes.
+  - `reviews`: Array d'identificadors de ressenyes.
 
 
 
@@ -50,18 +50,6 @@ Gestiona les opinions i puntuacions dels usuaris per a les sèries.
   - `score`: Valoració donada.
   - `date`: Data de creació o modificació.
 
-
-
-### 4. **Comentaris (`comments`)**
-Gestiona els comentaris sobre les ressenyes o sèries.
-- **Camps:**
-  - `_id`: Identificador únic del comentari.
-  - `user_id`: Identificador de l'usuari que ha escrit el comentari.
-  - `review_id`: Identificador de la ressenya associada (o `series_id` si el comentari és directe a una sèrie).
-  - `content`: Text del comentari.
-  - `date`: Data de creació.
-
-
 ---
 
 ## Relacions incloses
@@ -74,10 +62,7 @@ Gestiona els comentaris sobre les ressenyes o sèries.
 2. **Ressenyes a Sèries (N:1)**  
    Diverses ressenyes poden estar associades a una mateixa sèrie.
 
-3. **Sèries a Comentaris (1:N)**  
-   Cada sèrie pot tenir molts comentaris.
-
-4. **Sèries a Puntuacions (1:N)**  
+3. **Sèries a Puntuacions (1:N)**  
    Cada sèrie pot tenir moltes puntuacions.
 ---
 

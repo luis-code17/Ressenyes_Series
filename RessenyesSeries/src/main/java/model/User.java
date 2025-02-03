@@ -7,6 +7,7 @@ public class User {
     private String id;
     private String name;
     private String email;
+    private String password;
     private List<String> reviews;
 
     // Getters and setters
@@ -42,6 +43,10 @@ public class User {
         this.reviews = reviews;
     }
 
+    public String getPassword() {return password;}
+
+    public void setPassword(String password) {this.password = password;}
+
     // toString
     @Override
     public String toString() {
@@ -49,6 +54,7 @@ public class User {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", reviews=" + reviews +
                 '}';
     }

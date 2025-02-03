@@ -8,6 +8,6 @@
     { "_id": "review7", "user_id": "user4", "series_id": "series3", "comment": "Genial fins a l'últim episodi!", "score": 9, "date": "2025-01-15" },
     { "_id": "review8", "user_id": "user5", "series_id": "series3", "comment": "S'ha fet una mica repetitiva, però segueix sent bona.", "score": 7, "date": "2025-01-14" },
     { "_id": "review9", "user_id": "user6", "series_id": "series4", "comment": "Una comèdia excel·lent!", "score": 9, "date": "2025-01-13" },
-    { "_id": "review10", "user_id": "user7", "series_id": "series4", "comment": "Divertida, però algunes temporades són més febles.", "score": 8, "date": "2025-01-12" }
+    { "_id": "review10","user_id": "user7", "series_id": "series4", "comment": "Divertida, però algunes temporades són més febles.", "score": 8, "date": "2025-01-12" }
   ]
 }
