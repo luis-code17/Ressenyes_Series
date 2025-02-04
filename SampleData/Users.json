@@ -1,5 +1,4 @@
-{
-  "users": [
+[
     { "_id": "user0", "name": "Admin", "email": "admin@gmail.com", "password": "admin123", "isAdmin": true },
     { "_id": "user1", "name": "Joan Pérez", "email": "joanperez@mail.com", "reviews": ["review1", "review2"], "password": "password1" },
     { "_id": "user2", "name": "Maria López", "email": "marialopez@mail.com", "reviews": ["review3", "review4"], "password": "password2" },
@@ -11,5 +10,4 @@
     { "_id": "user8", "name": "Anna Torres", "email": "anna.torres@mail.com", "reviews": ["review12"], "password": "password8" },
     { "_id": "user9", "name": "Marc Díaz", "email": "marc.diaz@mail.com", "reviews": ["review13"], "password": "password9" },
     { "_id": "user10", "name": "Sofia Fernández", "email": "sofia.fernandez@mail.com", "reviews": ["review14", "review15"], "password": "password10" }
-  ]
-}
+]

@@ -1,5 +1,4 @@
-{
-  "series": [
+[
     { "_id": "series1", "name": "Stranger Things", "release_date": "2016-07-15", "average_score": 8.5, "reviews": ["review1", "review2", "review3"] },
     { "_id": "series2", "name": "Breaking Bad", "release_date": "2008-01-20", "average_score": 9.3, "reviews": ["review4", "review5"] },
     { "_id": "series3", "name": "Game of Thrones", "release_date": "2011-04-17", "average_score": 8.9, "reviews": ["review6", "review7", "review8"] },
@@ -10,6 +9,4 @@
     { "_id": "series8", "name": "Westworld", "release_date": "2016-10-02", "average_score": 8.5, "reviews": ["review16"] },
     { "_id": "series9", "name": "Black Mirror", "release_date": "2011-12-04", "average_score": 8.8, "reviews": ["review17"] },
     { "_id": "series10", "name": "Narcos", "release_date": "2015-08-28", "average_score": 8.8, "reviews": ["review18", "review19"] }
-  ]
-
-}
+]

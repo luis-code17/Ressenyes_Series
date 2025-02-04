@@ -1,9 +1,11 @@
 // src/main/java/model/User.java
 package model;
 
+import org.bson.Document;
+
 import java.util.List;
 
-public class User {
+public class Users {
     private String id;
     private String name;
     private String email;
@@ -57,5 +59,20 @@ public class User {
                 ", password='" + password + '\'' +
                 ", reviews=" + reviews +
                 '}';
+    }
+
+    public Document toDocument() {
+        Document document = new Document();
+        if (this.id != null) {
+            document.append("_id", this.id);
+        }else {
+            document.append("_id", new org.bson.types.ObjectId().toString());
+        }
+
+        document.append("name", this.name);
+        document.append("email", this.email);
+        document.append("password", this.password);
+        document.append("reviews", this.reviews);
+        return document;
     }
 }

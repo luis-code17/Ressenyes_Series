@@ -1,83 +1,90 @@
 package dao;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import model.User;
+import model.Users;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
-    private MongoCollection<Document> collection;
+    private final MongoCollection<Document> collection;
 
     public UserDAO(MongoDatabase database) {
         this.collection = database.getCollection("users");
     }
 
-    public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
-        Document document = collection.find().first();
-        if (document != null && document.containsKey("users")) {
-            List<Document> usersArray = (List<Document>) document.get("users");
-            for (Document userDoc : usersArray) {
-                User user = new User();
-                user.setId(userDoc.getString("_id"));
-                user.setName(userDoc.getString("name"));
-                user.setEmail(userDoc.getString("email"));
-                user.setReviews(userDoc.getList("reviews", String.class));
-                user.setPassword(userDoc.getString("password"));
-                users.add(user);
-            }
+    /**
+     * Get all users from the database and return them as a list of User objects
+     * @return
+     */
+    public List<Users> getAllUsers() {
+        List<Users> users = new ArrayList<>();
+        for (Document document : collection.find()) {
+            Users user = new Users();
+            user.setId(document.getString("_id"));
+            user.setName(document.getString("name"));
+            user.setEmail(document.getString("email"));
+            user.setPassword(document.getString("password"));
+            user.setReviews(document.getList("reviews", String.class));
+            users.add(user);
         }
         return users;
     }
-
-    public void insertUser(User user) {
-        Document userDoc = new Document();
-        userDoc.append("name", user.getName());
-        userDoc.append("email", user.getEmail());
-        userDoc.append("reviews", user.getReviews());
-        userDoc.append("password", user.getPassword());
-        collection.insertOne(userDoc);
+    /**
+     * Insert a new user into the database
+     * @param user
+     */
+    public void insertUser(Users user) {
+        collection.insertOne(user.toDocument());
     }
 
-    public User getUserByEmail(String email) {
-        Document query = new Document("users.email", email);
+    /**
+     * Get a user by email from the database
+     * @param email
+     * @return
+     */
+    public Users getUserByEmail(String email) {
+        Document query = new Document("email", email);
         Document userDoc = collection.find(query).first();
         if (userDoc != null) {
-            List<Document> usersArray = (List<Document>) userDoc.get("users");
-            for (Document user : usersArray) {
-                if (user.getString("email").equals(email)) {
-                    User u = new User();
-                    u.setId(user.getString("_id"));
-                    u.setName(user.getString("name"));
-                    u.setEmail(user.getString("email"));
-                    u.setPassword(user.getString("password"));
-                    return u;
-                }
-            }
+            Users u = new Users();
+            u.setId(userDoc.getString("_id")); // Cambiar getObjectId a getString
+            u.setName(userDoc.getString("name"));
+            u.setEmail(userDoc.getString("email"));
+            u.setPassword(userDoc.getString("password"));
+            u.setReviews(userDoc.getList("reviews", String.class));
+            return u;
         }
         return null;
     }
+    /**
+     * Check if the user is an admin
+     * @param email
+     * @return
+     */
     public boolean checkAdmin(String email) {
-        Document query = new Document("users.email", email);
+        Document query = new Document("email", email);
         Document userDoc = collection.find(query).first();
-        if(userDoc != null) {
-            List<Document> usersArray = (List<Document>) userDoc.get("users");
-            for (Document user : usersArray) {
-                if (user.getString("email").equals(email)) {
-                    return user.getBoolean("isAdmin");
-                }
-            }
+        if (userDoc != null) {
+            return userDoc.getBoolean("isAdmin", false); // Directly check the isAdmin field
         }
         return false;
     }
+
+    /**
+     * Check if the login is correct
+     * @param email
+     * @param password
+     * @return
+     */
     public boolean checkLogin(String email, String password) {
-        User u = this.getUserByEmail(email);
+        Users u = this.getUserByEmail(email);
         if (u != null) {
             return u.getPassword().equals(password);
         }
         return false;
     }
+
+
 }

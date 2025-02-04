@@ -1,6 +1,10 @@
 import com.mongodb.client.MongoDatabase;
+import dao.ReviewDAO;
 import dao.UserDAO;
-import model.User;
+import dao.SeriesDAO;
+import model.Reviews;
+import model.Series;
+import model.Users;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -9,6 +13,8 @@ public class App {
     public static void main(String[] args) {
         MongoDatabase database = Connection.getDatabase("RessenyesSeriesDB");
         UserDAO userDAO = new UserDAO(database);
+        ReviewDAO reviewDAO = new ReviewDAO(database);
+        SeriesDAO seriesDAO = new SeriesDAO(database);
         Scanner sc = new Scanner(System.in);
         View view = new View(sc);
         int option = view.initialMenu();
@@ -16,7 +22,8 @@ public class App {
         while (option != 3) {
             switch (option) {
                 case 1:
-                    boolean isAdmin = false;
+                    boolean isAdmin = true; // Set to false to test
+                    login = true; // Set to false to test
                     while (!login) {
                         String[] loginData = view.loginUser();
                         login = userDAO.checkLogin(loginData[0], loginData[1]);
@@ -27,18 +34,18 @@ public class App {
                     }
 
                     if (isAdmin) {
-                        appAdmin(userDAO, view);
+                        appAdmin(userDAO, view, reviewDAO, seriesDAO);
                     } else {
                         appUser(userDAO, view);
                     }
                     break;
                 case 2:
                     String[] register = view.registerUser();
-                    User user = new User();
-                    user.setName(register[0]);
-                    user.setEmail(register[1]);
-                    user.setPassword(register[2]);
-                    userDAO.insertUser(user);
+                    Users users = new Users();
+                    users.setName(register[0]);
+                    users.setEmail(register[1]);
+                    users.setPassword(register[2]);
+                    userDAO.insertUser(users);
                     break;
             }
             login = false;
@@ -46,25 +53,39 @@ public class App {
         }
     }
 
-    public static void appAdmin(UserDAO userDAO, View view) {
+    public static void appAdmin(UserDAO userDAO, View view, ReviewDAO reviewDAO, SeriesDAO seriesDAO) {
         int option = view.mainMenuAdmin();
         int collection;
         while (option != 5) {
             switch (option) {
-                case 1:
+                case 1: // List collection
                     collection = view.selectCollection();
                     switch (collection) {
                         case 1:// Users
-                            ArrayList<User> users = (ArrayList<User>) userDAO.getAllUsers();
+                            ArrayList<Users> users = (ArrayList<Users>) userDAO.getAllUsers();
                             view.printUsers(users);
                             break;
                         case 2:// Reviews
+                            option = view.menuSearchReviews();
+                            switch (option) {
+                                case 1:// By series
+                                    break;
+                                case 2:// By user
+                                    ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers();
+                                    int serieBySerch= view.selectUser(usersReviews);
+                                    ArrayList<Reviews> reviewsByUser = (ArrayList<Reviews>) reviewDAO.getReviewsByUserId(usersReviews.get(serieBySerch).getId());
+                                    view.printReviews(reviewsByUser);
+                                    break;
+                                case 3:// Return
+                                    System.out.println("Return");
+                                    break;
+                            }
                             break;
                         case 3:// Series
+                            ArrayList<Series> series = (ArrayList<Series>) seriesDAO.getAllSeries();
+                            view.printSeries(series);
                             break;
-                        case 4:// Comments
-                            break;
-                        case 5:// Return
+                        case 4:// Return
                             System.out.println("Return");
                             break;
                     }
@@ -73,9 +94,15 @@ public class App {
                     collection = view.selectCollection();
                     switch (collection) {
                         case 1:// Users
-                            User user = view.insertUser();
+                            Users users = view.insertUser();
+                            System.out.println(users);
+                            userDAO.insertUser(users);
                             break;
                         case 2:// Reviews
+                            ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers();
+                            ArrayList<Series> seriesReviews = (ArrayList<Series>) seriesDAO.getAllSeries();
+                            Reviews reviews = view.insertReview(usersReviews, seriesReviews);
+                            reviewDAO.insertReview(reviews);
                             break;
                         case 3:// Series
                             break;
