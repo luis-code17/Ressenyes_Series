@@ -69,6 +69,10 @@ public class App {
                             option = view.menuSearchReviews();
                             switch (option) {
                                 case 1:// By series
+                                    ArrayList<Series> seriesReviews = (ArrayList<Series>) seriesDAO.getAllSeries();
+                                    int serieBySeries = view.selectSerie(seriesReviews);
+                                    ArrayList<Reviews> reviewsBySeries = (ArrayList<Reviews>) reviewDAO.getReviewsBySeriesId(seriesReviews.get(serieBySeries).getId());
+                                    view.printReviews(reviewsBySeries);
                                     break;
                                 case 2:// By user
                                     ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers();
@@ -77,13 +81,31 @@ public class App {
                                     view.printReviews(reviewsByUser);
                                     break;
                                 case 3:// Return
+                                    String[] dates = view.insertDate();
+                                    ArrayList<Reviews> reviews = (ArrayList<Reviews>) reviewDAO.getReviewsByDate(dates[0], dates[1]);
+                                    view.printReviews(reviews);
+                                    break;
+                                case 4:// return
                                     System.out.println("Return");
                                     break;
                             }
                             break;
                         case 3:// Series
-                            ArrayList<Series> series = (ArrayList<Series>) seriesDAO.getAllSeries();
-                            view.printSeries(series);
+                            option = view.menuSearchSeries();
+                            switch (option) {
+                                case 1:// All
+                                    ArrayList<Series> seriesAll = (ArrayList<Series>) seriesDAO.getAllSeries();
+                                    view.printSeries(seriesAll);
+                                    break;
+                                case 2:// By date
+                                    String[] dates = view.insertDate();
+                                    ArrayList<Series> seriesByDate = (ArrayList<Series>) seriesDAO.getSeriesByDate(dates[0], dates[1]);
+                                    view.printSeries(seriesByDate);
+                                    break;
+                                case 3:// Return
+                                    System.out.println("Return");
+                                    break;
+                            }
                             break;
                         case 4:// Return
                             System.out.println("Return");
@@ -101,7 +123,7 @@ public class App {
                         case 2:// Reviews
                             ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers();
                             ArrayList<Series> seriesReviews = (ArrayList<Series>) seriesDAO.getAllSeries();
-                            Reviews reviews = view.insertReview(usersReviews, seriesReviews);
+                            Reviews reviews = view.insertReviewAdmin(usersReviews, seriesReviews);
                             reviewDAO.insertReview(reviews);
                             break;
                         case 3:// Series

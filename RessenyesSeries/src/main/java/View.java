@@ -4,8 +4,10 @@ import model.Users;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class View {
     private Scanner sc;
@@ -99,10 +101,30 @@ public class View {
 
     public int menuSearchReviews() {
         int option = 0;
-        while (option < 1 || option > 3) {
+        while (option < 1 || option > 4) {
             System.out.println(" ____________________ ");
             System.out.println("| 1. Search by serie |");
             System.out.println("| 2. Search by user  |");
+            System.out.println("| 3. Search by Date  |");
+            System.out.println("| 4. Exit            |");
+            System.out.println(" ____________________ ");
+            System.out.println("Choose an option: ");
+            if (!sc.hasNextInt()) {
+                System.out.println("Please enter a number between 1 and 4");
+                sc.next();
+            } else {
+                option = sc.nextInt();
+            }
+        }
+        return option;
+    }
+
+    public int menuSearchSeries(){
+        int option = 0;
+        while (option < 1 || option > 3) {
+            System.out.println(" ____________________ ");
+            System.out.println("| 1. Search All      |");
+            System.out.println("| 2. Search by date  |");
             System.out.println("| 3. Exit            |");
             System.out.println(" ____________________ ");
             System.out.println("Choose an option: ");
@@ -149,7 +171,7 @@ public class View {
         return users;
     }
 
-    public Reviews insertReview(ArrayList<Users> users, ArrayList<Series> series) {
+    public Reviews insertReviewAdmin(ArrayList<Users> users, ArrayList<Series> series) {
         Reviews reviews = new Reviews();
         int idUser= selectUser(users);
         reviews.setUserId(users.get(idUser).getId());
@@ -177,10 +199,57 @@ public class View {
         reviews.setDate(formattedDate);
         return reviews;
     }
+    public Series insertSeries() {
+        Series series = new Series();
+        System.out.println("Enter the name of the series: ");
+        series.setName(sc.next());
+        System.out.println("Enter the rating out of 10: ");
+        while (!sc.hasNextInt()) {
+            System.out.println("Please enter a valid integer rating between 1 and 10");
+            sc.next();
+        }
+        int rating = sc.nextInt();
+        while (rating < 1 || rating > 10) {
+            System.out.println("Please enter a rating between 1 and 10");
+            rating = sc.nextInt();
+        }
+        series.setRating(rating);
+        // Get the current date and format it to yyyy-MM-dd
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(formatter);
+        series.setReleaseDate(formattedDate);
+
+        return series;
+    }
+
+    public String[] insertDate() {
+        String[] dates = new String[2];
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (int i = 0; i < 2; i++) {
+            while (true) {
+                if (i == 0) {
+                    System.out.println("Enter the minimum date (yyyy-MM-dd): ");
+                } else {
+                    System.out.println("Enter the maximum date (yyyy-MM-dd): ");
+                }
+                String dateStr = sc.next();
+                try {
+                    LocalDate.parse(dateStr, formatter);
+                    dates[i] = dateStr;
+                    break;
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
+                }
+            }
+        }
+        return dates;
+    }
 
     /** SELECTS **/
 
-    private int selectSerie(ArrayList<Series> series) {
+    public int selectSerie(ArrayList<Series> series) {
         int option = 0;
         for (int i = 0; i < series.size(); i++) {
             System.out.println((i + 1) + ". " + series.get(i).getName());
