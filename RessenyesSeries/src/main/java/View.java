@@ -178,7 +178,11 @@ public class View {
         int idSerie= selectSerie(series);
         reviews.setSeriesId(series.get(idSerie).getId());
         System.out.println("Enter the comment: ");
-        reviews.setComment(sc.next());
+        String comment = sc.nextLine();
+        if (comment.isEmpty()) {
+            comment = sc.nextLine();
+        }
+        reviews.setComment(comment);
         System.out.println("Enter the rating out of 10: ");
         while (!sc.hasNextInt()) {
             System.out.println("Please enter a valid integer rating between 1 and 10");
@@ -202,7 +206,11 @@ public class View {
     public Series insertSeries() {
         Series series = new Series();
         System.out.println("Enter the name of the series: ");
-        series.setName(sc.next());
+        String name = sc.nextLine();
+        if (name.isEmpty()) {
+            name = sc.nextLine();
+        }
+        series.setName(name);
         System.out.println("Enter the rating out of 10: ");
         while (!sc.hasNextInt()) {
             System.out.println("Please enter a valid integer rating between 1 and 10");

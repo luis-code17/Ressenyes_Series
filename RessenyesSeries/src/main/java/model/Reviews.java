@@ -81,10 +81,10 @@ public class Reviews {
         } else {
             doc.append("_id", new org.bson.types.ObjectId().toString());
         }
-        doc.append("userId", userId);
-        doc.append("seriesId", seriesId);
+        doc.append("user_id", userId);
+        doc.append("series_id", seriesId);
         doc.append("comment", comment);
-        doc.append("rating", rating);
+        doc.append("score", rating);
         doc.append("date", date);
         return doc;
     }

@@ -1,5 +1,5 @@
 [
-    { "_id": "user0", "name": "Admin", "email": "admin@gmail.com", "password": "admin123", "isAdmin": true },
+    { "_id": "user0", "name": "Admin", "email": "admin@gmail.com", "password": "admin123", "isAdmin": true, "reviews": [] },
     { "_id": "user1", "name": "Joan Pérez", "email": "joanperez@mail.com", "reviews": ["review1", "review2"], "password": "password1" },
     { "_id": "user2", "name": "Maria López", "email": "marialopez@mail.com", "reviews": ["review3", "review4"], "password": "password2" },
     { "_id": "user3", "name": "Pau González", "email": "pau.gonzalez@mail.com", "reviews": ["review5"], "password": "password3" },

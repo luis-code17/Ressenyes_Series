@@ -76,7 +76,11 @@ public class Series {
         document.append("name", name);
         document.append("release_date", releaseDate);
         document.append("average_score", rating);
-        document.append("reviews", reviews);
+        if (reviews != null) {
+            document.append("reviews", reviews);
+        }else {
+            document.append("reviews", List.of()); // Empty list
+        }
         return document;
     }
 }

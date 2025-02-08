@@ -127,10 +127,10 @@ public class App {
                             reviewDAO.insertReview(reviews);
                             break;
                         case 3:// Series
+                            Series series = view.insertSeries();
+                            seriesDAO.insertSeries(series.toDocument());
                             break;
-                        case 4:// Comments
-                            break;
-                        case 5:// Return
+                        case 4:// Return
                             System.out.println("Return");
                             break;
                     }
@@ -139,14 +139,15 @@ public class App {
                     collection = view.selectCollection();
                     switch (collection) {
                         case 1:// Users
+                            System.out.println("Not implemented");
                             break;
                         case 2:// Reviews
+                            System.out.println("Not implemented");
                             break;
                         case 3:// Series
+                            System.out.println("Not implemented");
                             break;
-                        case 4:// Comments
-                            break;
-                        case 5:// Return
+                        case 4:// Return
                             System.out.println("Return");
                             break;
                     }
@@ -155,14 +156,15 @@ public class App {
                     collection = view.selectCollection();
                     switch (collection) {
                         case 1:// Users
+                            System.out.println("Not implemented");
                             break;
                         case 2:// Reviews
+                            System.out.println("Not implemented");
                             break;
                         case 3:// Series
+                            System.out.println("Not implemented");
                             break;
-                        case 4:// Comments
-                            break;
-                        case 5:// Return
+                        case 4:// Return
                             System.out.println("Return");
                             break;
                     }
@@ -173,6 +175,10 @@ public class App {
         System.out.println("Exit ");
     }
 
+
+    /**
+     * Falta implementar
+     */
     public static void appUser(UserDAO userDAO, View view) {
         int option = view.mainMenuUser();
         while (option != 3) {

@@ -14,19 +14,32 @@ import java.util.List;
 public class ReviewDAO {
     private final MongoCollection<Document> collection;
     private final MongoCollection<Document> seriesCollection;
+    private final MongoCollection<Document> userCollection;
 
     public ReviewDAO(MongoDatabase database) {
         this.collection = database.getCollection("reviews");
         this.seriesCollection = database.getCollection("series");
+        this.userCollection = database.getCollection("users");
     }
 
     public void insertReview(Reviews reviews) {
-        collection.insertOne(reviews.toDocument());
+        Document review = reviews.toDocument();
+        collection.insertOne(review);
+        String reviewId = review.getString("_id");
+
+        // Add review to series
         Bson filter = Filters.eq("_id", reviews.getSeriesId());
         Document series = seriesCollection.find(filter).first();
         List<String> reviewsList = series.getList("reviews", String.class);
-        reviewsList.add(reviews.getId());
+        reviewsList.add(reviewId);
         seriesCollection.updateOne(filter, new Document("$set", new Document("reviews", reviewsList)));
+
+        //Add review to user
+        Bson userFilter = Filters.eq("_id", reviews.getUserId());
+        Document user = userCollection.find(userFilter).first();
+        List<String> userReviews = user.getList("reviews", String.class);
+        userReviews.add(reviewId);
+        userCollection.updateOne(userFilter, new Document("$set", new Document("reviews", userReviews)));
     }
 
     public List<Reviews> getReviewsBySeriesId(String seriesId) {
