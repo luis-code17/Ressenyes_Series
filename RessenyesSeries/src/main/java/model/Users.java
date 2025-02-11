@@ -72,7 +72,12 @@ public class Users {
         document.append("name", this.name);
         document.append("email", this.email);
         document.append("password", this.password);
-        document.append("reviews", this.reviews);
+        
+        if (reviews != null) {
+            document.append("reviews", reviews);
+        }else {
+            document.append("reviews", List.of()); // Empty list
+        }
         return document;
     }
 }
