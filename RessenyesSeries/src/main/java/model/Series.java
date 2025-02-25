@@ -1,8 +1,8 @@
 package model;
 
-import java.util.Date;
 import java.util.List;
-import org.bson.Document;
+import org.json.JSONObject;
+
 
 
 public class Series {
@@ -65,22 +65,13 @@ public class Series {
                 '}';
     }
 
-    public Document toDocument() {
-        Document document = new Document();
-
-        if (this.id != null) {
-            document.append("_id", this.id);
-        }else {
-            document.append("_id", new org.bson.types.ObjectId().toString());
-        }
-        document.append("name", name);
-        document.append("release_date", releaseDate);
-        document.append("average_score", rating);
-        if (reviews != null) {
-            document.append("reviews", reviews);
-        }else {
-            document.append("reviews", List.of()); // Empty list
-        }
-        return document;
+    public String toJson() {
+        JSONObject json = new JSONObject();
+        json.put("id", id);
+        json.put("name", name);
+        json.put("releaseDate", releaseDate);
+        json.put("rating", rating);
+        json.put("reviews", reviews);
+        return json.toString();
     }
 }

@@ -1,100 +1,118 @@
 package dao;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import model.Reviews;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import javax.print.Doc;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewDAO {
-    private final MongoCollection<Document> collection;
-    private final MongoCollection<Document> seriesCollection;
-    private final MongoCollection<Document> userCollection;
+    private final HttpClient client;
 
-    public ReviewDAO(MongoDatabase database) {
-        this.collection = database.getCollection("reviews");
-        this.seriesCollection = database.getCollection("series");
-        this.userCollection = database.getCollection("users");
+    public ReviewDAO(HttpClient clientHttp) {
+        this.client = clientHttp;
     }
 
     public void insertReview(Reviews reviews) {
-        Document review = reviews.toDocument();
-        collection.insertOne(review);
-        String reviewId = review.getString("_id");
-
-        // Add review to series
-        Bson filter = Filters.eq("_id", reviews.getSeriesId());
-        Document series = seriesCollection.find(filter).first();
-        List<String> reviewsList = series.getList("reviews", String.class);
-        reviewsList.add(reviewId);
-        seriesCollection.updateOne(filter, new Document("$set", new Document("reviews", reviewsList)));
-
-        //Add review to user
-        Bson userFilter = Filters.eq("_id", reviews.getUserId());
-        Document user = userCollection.find(userFilter).first();
-        List<String> userReviews = user.getList("reviews", String.class);
-        userReviews.add(reviewId);
-        userCollection.updateOne(userFilter, new Document("$set", new Document("reviews", userReviews)));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(reviews.toJSON()))
+                .build();
+        try {
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Reviews> getReviewsBySeriesId(String seriesId) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews/bySerie?series_id=" + seriesId))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
         List<Reviews> reviews = new ArrayList<>();
-        Bson filter = Filters.eq("series_id", seriesId);
-        for (Document document : collection.find(filter)) {
-            Reviews review = new Reviews();
-            review.setComment(document.getString("comment"));
-            review.setRating(document.getInteger("score"));
-            review.setUserId(document.getString("user_id"));
-            review.setSeriesId(document.getString("series_id"));
-            review.setDate(document.getString("date"));
-            review.setId(document.getString("_id"));
-            reviews.add(review);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONArray reviewsArray = new JSONArray(body);
+            for (int i = 0; i < reviewsArray.length(); i++) {
+                JSONObject reviewJson = reviewsArray.getJSONObject(i);
+                Reviews r = new Reviews();
+                r.setId(reviewJson.getString("_id"));
+                r.setUserId(reviewJson.getString("user_id"));
+                r.setSeriesId(reviewJson.getString("series_id"));
+                r.setComment(reviewJson.getString("comment"));
+                r.setRating(reviewJson.getInt("score"));
+                r.setDate(reviewJson.getString("date"));
+                reviews.add(r);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
         return reviews;
     }
 
-
-
     public List<Reviews> getReviewsByUserId(String userId) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews/byUser?user_id=" + userId))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
         List<Reviews> reviews = new ArrayList<>();
-        Bson filter = Filters.eq("user_id", userId);
-        for (Document document : collection.find(filter)) {
-            Reviews review = new Reviews();
-            review.setComment(document.getString("comment"));
-            review.setRating(document.getInteger("score"));
-            review.setUserId(document.getString("user_id"));
-            review.setSeriesId(document.getString("series_id"));
-            review.setDate(document.getString("date"));
-            review.setId(document.getString("_id"));
-            reviews.add(review);
-        }
-        if (reviews.isEmpty()) {
-            System.out.println("No reviews found for this user");
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONArray reviewsArray = new JSONArray(body);
+            for (int i = 0; i < reviewsArray.length(); i++) {
+                JSONObject reviewJson = reviewsArray.getJSONObject(i);
+                Reviews r = new Reviews();
+                r.setId(reviewJson.getString("_id"));
+                r.setUserId(reviewJson.getString("user_id"));
+                r.setSeriesId(reviewJson.getString("series_id"));
+                r.setComment(reviewJson.getString("comment"));
+                r.setRating(reviewJson.getInt("score"));
+                r.setDate(reviewJson.getString("date"));
+                reviews.add(r);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
         return reviews;
     }
 
     public List<Reviews> getReviewsByDate(String minDate, String maxDate) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
         List<Reviews> reviews = new ArrayList<>();
-        Bson filter = Filters.and(Filters.gte("date", minDate), Filters.lte("date", maxDate));
-        for (Document document : collection.find(filter)) {
-            Reviews review = new Reviews();
-            review.setComment(document.getString("comment"));
-            review.setRating(document.getInteger("score"));
-            review.setUserId(document.getString("user_id"));
-            review.setSeriesId(document.getString("series_id"));
-            review.setDate(document.getString("date"));
-            review.setId(document.getString("_id"));
-            reviews.add(review);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONArray reviewsArray = new JSONArray(body);
+            for (int i = 0; i < reviewsArray.length(); i++) {
+                JSONObject reviewJson = reviewsArray.getJSONObject(i);
+                Reviews r = new Reviews();
+                r.setId(reviewJson.getString("_id"));
+                r.setUserId(reviewJson.getString("user_id"));
+                r.setSeriesId(reviewJson.getString("series_id"));
+                r.setComment(reviewJson.getString("comment"));
+                r.setRating(reviewJson.getInt("score"));
+                r.setDate(reviewJson.getString("date"));
+                reviews.add(r);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
         return reviews;
     }
-
-
-
 }

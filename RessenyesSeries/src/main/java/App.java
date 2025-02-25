@@ -1,4 +1,3 @@
-import com.mongodb.client.MongoDatabase;
 import dao.ReviewDAO;
 import dao.UserDAO;
 import dao.SeriesDAO;
@@ -6,15 +5,16 @@ import model.Reviews;
 import model.Series;
 import model.Users;
 
+import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
-        MongoDatabase database = Connection.getDatabase("RessenyesSeriesDB");
-        UserDAO userDAO = new UserDAO(database);
-        ReviewDAO reviewDAO = new ReviewDAO(database);
-        SeriesDAO seriesDAO = new SeriesDAO(database);
+        HttpClient clientHttp = Connection.getHttpClient();
+        UserDAO userDAO = new UserDAO(clientHttp);
+        ReviewDAO reviewDAO = new ReviewDAO(clientHttp);
+        SeriesDAO seriesDAO = new SeriesDAO(clientHttp);
         Scanner sc = new Scanner(System.in);
         View view = new View(sc);
         int option = view.initialMenu();
@@ -128,7 +128,7 @@ public class App {
                             break;
                         case 3:// Series
                             Series series = view.insertSeries();
-                            seriesDAO.insertSeries(series.toDocument());
+                            seriesDAO.insertSeries(series);
                             break;
                         case 4:// Return
                             System.out.println("Return");

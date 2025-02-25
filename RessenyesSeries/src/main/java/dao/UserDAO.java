@@ -1,17 +1,22 @@
 package dao;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import model.Users;
-import org.bson.Document;
 
+import model.Users;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
-    private final MongoCollection<Document> collection;
+    private final HttpClient client;
 
-    public UserDAO(MongoDatabase database) {
-        this.collection = database.getCollection("users");
+    public UserDAO(HttpClient clientHttp) {
+        this.client = clientHttp;
     }
 
     /**
@@ -19,24 +24,52 @@ public class UserDAO {
      * @return
      */
     public List<Users> getAllUsers() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/users"))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
         List<Users> users = new ArrayList<>();
-        for (Document document : collection.find()) {
-            Users user = new Users();
-            user.setId(document.getString("_id"));
-            user.setName(document.getString("name"));
-            user.setEmail(document.getString("email"));
-            user.setPassword(document.getString("password"));
-            user.setReviews(document.getList("reviews", String.class));
-            users.add(user);
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONArray usersArray = new JSONArray(body);
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject userJson = usersArray.getJSONObject(i);
+                Users u = new Users();
+                u.setId(userJson.getString("_id"));
+                u.setName(userJson.getString("name"));
+                u.setEmail(userJson.getString("email"));
+                u.setPassword(userJson.getString("password"));
+                JSONArray reviewsArray = userJson.getJSONArray("reviews");
+                List<String> reviews = new ArrayList<>();
+                for (int j = 0; j < reviewsArray.length(); j++) {
+                    reviews.add(reviewsArray.getString(j));
+                }
+                u.setReviews(reviews);
+                users.add(u);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
         return users;
     }
+
     /**
      * Insert a new user into the database
      * @param user
      */
     public void insertUser(Users user) {
-        collection.insertOne(user.toDocument());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/users"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(user.toJson()))
+                .build();
+        try {
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -45,29 +78,42 @@ public class UserDAO {
      * @return
      */
     public Users getUserByEmail(String email) {
-        Document query = new Document("email", email);
-        Document userDoc = collection.find(query).first();
-        if (userDoc != null) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/users/byEmail?email=" + email))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONObject userJson = new JSONObject(body);
             Users u = new Users();
-            u.setId(userDoc.getString("_id")); // Cambiar getObjectId a getString
-            u.setName(userDoc.getString("name"));
-            u.setEmail(userDoc.getString("email"));
-            u.setPassword(userDoc.getString("password"));
-            u.setReviews(userDoc.getList("reviews", String.class));
+            u.setId(userJson.getString("_id"));
+            u.setName(userJson.getString("name"));
+            u.setEmail(userJson.getString("email"));
+            u.setPassword(userJson.getString("password"));
+            JSONArray reviewsArray = userJson.getJSONArray("reviews");
+            List<String> reviews = new ArrayList<>();
+            for (int j = 0; j < reviewsArray.length(); j++) {
+                reviews.add(reviewsArray.getString(j));
+            }
+            u.setReviews(reviews);
             return u;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
         return null;
     }
+
     /**
      * Check if the user is an admin
      * @param email
      * @return
      */
     public boolean checkAdmin(String email) {
-        Document query = new Document("email", email);
-        Document userDoc = collection.find(query).first();
-        if (userDoc != null) {
-            return userDoc.getBoolean("isAdmin", false); // Directly check the isAdmin field
+        Users u = this.getUserByEmail(email);
+        if (u != null) {
+            return u.getEmail().equals("admin@gmail.com");
         }
         return false;
     }
@@ -85,6 +131,4 @@ public class UserDAO {
         }
         return false;
     }
-
-
 }

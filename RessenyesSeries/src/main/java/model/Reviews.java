@@ -1,7 +1,7 @@
 package model;
 
-import java.util.Date;
-import org.bson.Document;
+import org.json.JSONObject;
+
 
 
 public class Reviews {
@@ -74,18 +74,14 @@ public class Reviews {
                 '}';
     }
 
-    public Document toDocument() {
-        Document doc = new Document();
-        if (id != null) {
-            doc.append("_id", id);
-        } else {
-            doc.append("_id", new org.bson.types.ObjectId().toString());
-        }
-        doc.append("user_id", userId);
-        doc.append("series_id", seriesId);
-        doc.append("comment", comment);
-        doc.append("score", rating);
-        doc.append("date", date);
-        return doc;
+    public String toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("userId", userId);
+        jsonObject.put("seriesId", seriesId);
+        jsonObject.put("comment", comment);
+        jsonObject.put("rating", rating);
+        jsonObject.put("date", date);
+        return jsonObject.toString();
     }
 }

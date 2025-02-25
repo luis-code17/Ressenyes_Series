@@ -1,9 +1,10 @@
 // src/main/java/model/User.java
 package model;
 
-import org.bson.Document;
 
 import java.util.List;
+import org.json.JSONObject;
+
 
 public class Users {
     private String id;
@@ -61,23 +62,14 @@ public class Users {
                 '}';
     }
 
-    public Document toDocument() {
-        Document document = new Document();
-        if (this.id != null) {
-            document.append("_id", this.id);
-        }else {
-            document.append("_id", new org.bson.types.ObjectId().toString());
-        }
-
-        document.append("name", this.name);
-        document.append("email", this.email);
-        document.append("password", this.password);
-        
-        if (reviews != null) {
-            document.append("reviews", reviews);
-        }else {
-            document.append("reviews", List.of()); // Empty list
-        }
-        return document;
+    // toJSON
+    public String toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("name", name);
+        jsonObject.put("email", email);
+        jsonObject.put("password", password);
+        jsonObject.put("reviews", reviews);
+        return jsonObject.toString();
     }
 }

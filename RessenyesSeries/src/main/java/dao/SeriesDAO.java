@@ -1,53 +1,98 @@
 package dao;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import model.Series;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SeriesDAO {
-    private final MongoCollection<Document> collection;
+    private final HttpClient client;
 
-    public SeriesDAO(MongoDatabase database) {
-        this.collection = database.getCollection("series");
+    public SeriesDAO(HttpClient clientHttp) {
+        this.client = clientHttp;
     }
 
-    public void insertSeries(Document series) {
-        collection.insertOne(series);
+    public void insertSeries(Series series) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/series"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(series.toJson()))
+                .build();
+        try {
+            client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Series> getAllSeries() {
-        List<Series> series = new ArrayList<>();
-        for (Document document : collection.find()) {
-            Series s = new Series();
-            s.setId(document.getString("_id"));
-            s.setName(document.getString("name"));
-            s.setRating(document.getDouble("average_score"));
-            s.setReviews(document.getList("reviews", String.class));
-            s.setReleaseDate(document.getString("release_date"));
-            series.add(s);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/series"))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        List<Series> seriesList = new ArrayList<>();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONArray seriesArray = new JSONArray(body);
+            for (int i = 0; i < seriesArray.length(); i++) {
+                JSONObject seriesJson = seriesArray.getJSONObject(i);
+                Series s = new Series();
+                s.setId(seriesJson.getString("_id"));
+                s.setName(seriesJson.getString("name"));
+                s.setRating(seriesJson.getDouble("average_score"));
+                s.setReleaseDate(seriesJson.getString("release_date"));
+                JSONArray reviewsArray = seriesJson.getJSONArray("reviews");
+                List<String> reviews = new ArrayList<>();
+                for (int j = 0; j < reviewsArray.length(); j++) {
+                    reviews.add(reviewsArray.getString(j));
+                }
+                s.setReviews(reviews);
+                seriesList.add(s);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-        return series;
+        return seriesList;
     }
 
     public List<Series> getSeriesByDate(String minDate, String maxDate) {
-        List<Series> series = new ArrayList<>();
-        Bson filter = Filters.and(Filters.gte("release_date", minDate), Filters.lte("release_date", maxDate));
-        for (Document document : collection.find(filter)) {
-            Series s = new Series();
-            s.setId(document.getString("_id"));
-            s.setName(document.getString("name"));
-            s.setRating(document.getDouble("average_score"));
-            s.setReviews(document.getList("reviews", String.class));
-            s.setReleaseDate(document.getString("release_date"));
-            series.add(s);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/series/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        List<Series> seriesList = new ArrayList<>();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            JSONArray seriesArray = new JSONArray(body);
+            for (int i = 0; i < seriesArray.length(); i++) {
+                JSONObject seriesJson = seriesArray.getJSONObject(i);
+                Series s = new Series();
+                s.setId(seriesJson.getString("_id"));
+                s.setName(seriesJson.getString("name"));
+                s.setRating(seriesJson.getDouble("average_score"));
+                s.setReleaseDate(seriesJson.getString("release_date"));
+                JSONArray reviewsArray = seriesJson.getJSONArray("reviews");
+                List<String> reviews = new ArrayList<>();
+                for (int j = 0; j < reviewsArray.length(); j++) {
+                    reviews.add(reviewsArray.getString(j));
+                }
+                s.setReviews(reviews);
+                seriesList.add(s);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-        return series;
+        return seriesList;
     }
-
 }
