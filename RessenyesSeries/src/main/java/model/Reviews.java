@@ -76,11 +76,10 @@ public class Reviews {
 
     public String toJSON() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
-        jsonObject.put("userId", userId);
-        jsonObject.put("seriesId", seriesId);
+        jsonObject.put("user_id", userId);
+        jsonObject.put("series_id", seriesId);
         jsonObject.put("comment", comment);
-        jsonObject.put("rating", rating);
+        jsonObject.put("score", rating);
         jsonObject.put("date", date);
         return jsonObject.toString();
     }

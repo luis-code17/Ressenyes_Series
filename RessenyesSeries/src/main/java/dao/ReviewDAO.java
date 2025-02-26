@@ -14,6 +14,7 @@ import java.util.List;
 
 public class ReviewDAO {
     private final HttpClient client;
+    private static final String BASE_URL = "https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app";
 
     public ReviewDAO(HttpClient clientHttp) {
         this.client = clientHttp;
@@ -26,7 +27,8 @@ public class ReviewDAO {
                 .POST(HttpRequest.BodyPublishers.ofString(reviews.toJSON()))
                 .build();
         try {
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -34,7 +36,7 @@ public class ReviewDAO {
 
     public List<Reviews> getReviewsBySeriesId(String seriesId) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews/bySerie?series_id=" + seriesId))
+                .uri(URI.create(BASE_URL+"/reviews/bySerie?series_id=" + seriesId))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -62,7 +64,7 @@ public class ReviewDAO {
 
     public List<Reviews> getReviewsByUserId(String userId) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews/byUser?user_id=" + userId))
+                .uri(URI.create(BASE_URL+"/reviews/byUser?user_id=" + userId))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -90,7 +92,7 @@ public class ReviewDAO {
 
     public List<Reviews> getReviewsByDate(String minDate, String maxDate) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/reviews/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
+                .uri(URI.create(BASE_URL+"/reviews/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();

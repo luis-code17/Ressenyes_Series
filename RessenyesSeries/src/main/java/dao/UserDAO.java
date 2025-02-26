@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserDAO {
     private final HttpClient client;
-
+    private static final String BASE_URL = "https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app";
     public UserDAO(HttpClient clientHttp) {
         this.client = clientHttp;
     }
@@ -25,7 +25,7 @@ public class UserDAO {
      */
     public List<Users> getAllUsers() {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/users"))
+                .uri(URI.create(BASE_URL+"/users"))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -61,12 +61,13 @@ public class UserDAO {
      */
     public void insertUser(Users user) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/users"))
+                .uri(URI.create(BASE_URL + "/users"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(user.toJson()))
                 .build();
         try {
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -79,7 +80,7 @@ public class UserDAO {
      */
     public Users getUserByEmail(String email) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/users/byEmail?email=" + email))
+                .uri(URI.create(BASE_URL+"/users/byEmail?email=" + email))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();

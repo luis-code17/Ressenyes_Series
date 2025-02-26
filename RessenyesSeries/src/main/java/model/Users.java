@@ -65,7 +65,6 @@ public class Users {
     // toJSON
     public String toJson() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
         jsonObject.put("name", name);
         jsonObject.put("email", email);
         jsonObject.put("password", password);

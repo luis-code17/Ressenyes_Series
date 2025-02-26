@@ -67,10 +67,9 @@ public class Series {
 
     public String toJson() {
         JSONObject json = new JSONObject();
-        json.put("id", id);
         json.put("name", name);
         json.put("releaseDate", releaseDate);
-        json.put("rating", rating);
+        json.put("average_score", rating);
         json.put("reviews", reviews);
         return json.toString();
     }

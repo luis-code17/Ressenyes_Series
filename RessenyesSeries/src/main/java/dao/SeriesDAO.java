@@ -14,6 +14,7 @@ import java.util.List;
 
 public class SeriesDAO {
     private final HttpClient client;
+    private static final String BASE_URL = "https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app";
 
     public SeriesDAO(HttpClient clientHttp) {
         this.client = clientHttp;
@@ -21,12 +22,13 @@ public class SeriesDAO {
 
     public void insertSeries(Series series) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/series"))
+                .uri(URI.create(BASE_URL+"/series"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(series.toJson()))
                 .build();
         try {
-            client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -34,7 +36,7 @@ public class SeriesDAO {
 
     public List<Series> getAllSeries() {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/series"))
+                .uri(URI.create(BASE_URL+"/series"))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
@@ -66,7 +68,7 @@ public class SeriesDAO {
 
     public List<Series> getSeriesByDate(String minDate, String maxDate) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://m6-uf-3-api-git-main-luis-projects-e603fc68.vercel.app/series/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
+                .uri(URI.create(BASE_URL+"/series/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
