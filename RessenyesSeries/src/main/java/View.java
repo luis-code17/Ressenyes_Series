@@ -99,26 +99,6 @@ public class View {
         return option;
     }
 
-    public int menuSearchReviews() {
-        int option = 0;
-        while (option < 1 || option > 4) {
-            System.out.println(" ____________________ ");
-            System.out.println("| 1. Search by serie |");
-            System.out.println("| 2. Search by user  |");
-            System.out.println("| 3. Search by Date  |");
-            System.out.println("| 4. Exit            |");
-            System.out.println(" ____________________ ");
-            System.out.println("Choose an option: ");
-            if (!sc.hasNextInt()) {
-                System.out.println("Please enter a number between 1 and 4");
-                sc.next();
-            } else {
-                option = sc.nextInt();
-            }
-        }
-        return option;
-    }
-
     public int menuSearchSeries(){
         int option = 0;
         while (option < 1 || option > 3) {

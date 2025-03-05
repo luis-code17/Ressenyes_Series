@@ -11,6 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SeriesDAO {
     private final HttpClient client;
@@ -20,81 +21,76 @@ public class SeriesDAO {
         this.client = clientHttp;
     }
 
-    public void insertSeries(Series series) {
+    public CompletableFuture<Void> insertSeries(Series series) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL+"/series"))
+                .uri(URI.create(BASE_URL + "/series"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(series.toJson()))
                 .build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> {
+                    System.out.println("Serie insertada: " + response.body());
+                });
     }
 
-    public List<Series> getAllSeries() {
+
+    public CompletableFuture<List<Series>>getAllSeries() {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL+"/series"))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
-        List<Series> seriesList = new ArrayList<>();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String body = response.body();
-            JSONArray seriesArray = new JSONArray(body);
-            for (int i = 0; i < seriesArray.length(); i++) {
-                JSONObject seriesJson = seriesArray.getJSONObject(i);
-                Series s = new Series();
-                s.setId(seriesJson.getString("_id"));
-                s.setName(seriesJson.getString("name"));
-                s.setRating(seriesJson.getDouble("average_score"));
-                s.setReleaseDate(seriesJson.getString("release_date"));
-                JSONArray reviewsArray = seriesJson.getJSONArray("reviews");
-                List<String> reviews = new ArrayList<>();
-                for (int j = 0; j < reviewsArray.length(); j++) {
-                    reviews.add(reviewsArray.getString(j));
-                }
-                s.setReviews(reviews);
-                seriesList.add(s);
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return seriesList;
+
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response -> {
+                    List<Series> seriesList = new ArrayList<>();
+                    JSONArray seriesArray = new JSONArray(response.body());
+                    for (int i = 0; i < seriesArray.length(); i++) {
+                        JSONObject seriesJson = seriesArray.getJSONObject(i);
+                        Series s = new Series();
+                        s.setId(seriesJson.getString("_id"));
+                        s.setName(seriesJson.getString("name"));
+                        s.setRating(seriesJson.getDouble("average_score"));
+                        s.setReleaseDate(seriesJson.getString("release_date"));
+                        JSONArray reviewsArray = seriesJson.getJSONArray("reviews");
+                        List<String> reviews = new ArrayList<>();
+                        for (int j = 0; j < reviewsArray.length(); j++) {
+                            reviews.add(reviewsArray.getString(j));
+                        }
+                        s.setReviews(reviews);
+                        seriesList.add(s);
+                    }
+                    return seriesList;
+                });
     }
 
-    public List<Series> getSeriesByDate(String minDate, String maxDate) {
+    public CompletableFuture<List<Series>> getSeriesByDate(String minDate, String maxDate) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL+"/series/byDate?minDate=" + minDate + "&maxDate=" + maxDate))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
-        List<Series> seriesList = new ArrayList<>();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String body = response.body();
-            JSONArray seriesArray = new JSONArray(body);
-            for (int i = 0; i < seriesArray.length(); i++) {
-                JSONObject seriesJson = seriesArray.getJSONObject(i);
-                Series s = new Series();
-                s.setId(seriesJson.getString("_id"));
-                s.setName(seriesJson.getString("name"));
-                s.setRating(seriesJson.getDouble("average_score"));
-                s.setReleaseDate(seriesJson.getString("release_date"));
-                JSONArray reviewsArray = seriesJson.getJSONArray("reviews");
-                List<String> reviews = new ArrayList<>();
-                for (int j = 0; j < reviewsArray.length(); j++) {
-                    reviews.add(reviewsArray.getString(j));
-                }
-                s.setReviews(reviews);
-                seriesList.add(s);
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return seriesList;
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(response -> {
+                    List<Series> seriesList = new ArrayList<>();
+                    JSONArray seriesArray = new JSONArray(response.body());
+                    for (int i = 0; i < seriesArray.length(); i++) {
+                        JSONObject seriesJson = seriesArray.getJSONObject(i);
+                        Series s = new Series();
+                        s.setId(seriesJson.getString("_id"));
+                        s.setName(seriesJson.getString("name"));
+                        s.setRating(seriesJson.getDouble("average_score"));
+                        s.setReleaseDate(seriesJson.getString("release_date"));
+                        JSONArray reviewsArray = seriesJson.getJSONArray("reviews");
+                        List<String> reviews = new ArrayList<>();
+                        for (int j = 0; j < reviewsArray.length(); j++) {
+                            reviews.add(reviewsArray.getString(j));
+                        }
+                        s.setReviews(reviews);
+                        seriesList.add(s);
+                    }
+                    return seriesList;
+                });
     }
 }

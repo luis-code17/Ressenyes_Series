@@ -18,7 +18,7 @@ public class App {
         Scanner sc = new Scanner(System.in);
         View view = new View(sc);
         int option = view.initialMenu();
-        boolean login = false;
+        boolean login = true;
         while (option != 3) {
             switch (option) {
                 case 1:
@@ -36,7 +36,8 @@ public class App {
                     if (isAdmin) {
                         appAdmin(userDAO, view, reviewDAO, seriesDAO);
                     } else {
-                        appUser(userDAO, view);
+                        //appUser(userDAO, view); // Not implemented
+                        appAdmin(userDAO, view, reviewDAO, seriesDAO);
                     }
                     break;
                 case 2:
@@ -62,44 +63,24 @@ public class App {
                     collection = view.selectCollection();
                     switch (collection) {
                         case 1:// Users
-                            ArrayList<Users> users = (ArrayList<Users>) userDAO.getAllUsers();
+                            ArrayList<Users> users = (ArrayList<Users>) userDAO.getAllUsers().join();
                             view.printUsers(users);
                             break;
                         case 2:// Reviews
-                            option = view.menuSearchReviews();
-                            switch (option) {
-                                case 1:// By series
-                                    ArrayList<Series> seriesReviews = (ArrayList<Series>) seriesDAO.getAllSeries();
-                                    int serieBySeries = view.selectSerie(seriesReviews);
-                                    ArrayList<Reviews> reviewsBySeries = (ArrayList<Reviews>) reviewDAO.getReviewsBySeriesId(seriesReviews.get(serieBySeries).getId());
-                                    view.printReviews(reviewsBySeries);
-                                    break;
-                                case 2:// By user
-                                    ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers();
-                                    int serieBySerch= view.selectUser(usersReviews);
-                                    ArrayList<Reviews> reviewsByUser = (ArrayList<Reviews>) reviewDAO.getReviewsByUserId(usersReviews.get(serieBySerch).getId());
-                                    view.printReviews(reviewsByUser);
-                                    break;
-                                case 3:// Return
-                                    String[] dates = view.insertDate();
-                                    ArrayList<Reviews> reviews = (ArrayList<Reviews>) reviewDAO.getReviewsByDate(dates[0], dates[1]);
-                                    view.printReviews(reviews);
-                                    break;
-                                case 4:// return
-                                    System.out.println("Return");
-                                    break;
-                            }
+                            String[] dates = view.insertDate();
+                            ArrayList<Reviews> reviews = (ArrayList<Reviews>) reviewDAO.getReviewsByDate(dates[0], dates[1]).join();
+                            view.printReviews(reviews);
                             break;
                         case 3:// Series
                             option = view.menuSearchSeries();
                             switch (option) {
                                 case 1:// All
-                                    ArrayList<Series> seriesAll = (ArrayList<Series>) seriesDAO.getAllSeries();
+                                    ArrayList<Series> seriesAll = (ArrayList<Series>) seriesDAO.getAllSeries().join();
                                     view.printSeries(seriesAll);
                                     break;
                                 case 2:// By date
-                                    String[] dates = view.insertDate();
-                                    ArrayList<Series> seriesByDate = (ArrayList<Series>) seriesDAO.getSeriesByDate(dates[0], dates[1]);
+                                    String[] datess = view.insertDate();
+                                    ArrayList<Series> seriesByDate = (ArrayList<Series>) seriesDAO.getSeriesByDate(datess[0], datess[1]).join();
                                     view.printSeries(seriesByDate);
                                     break;
                                 case 3:// Return
@@ -117,18 +98,17 @@ public class App {
                     switch (collection) {
                         case 1:// Users
                             Users users = view.insertUser();
-                            System.out.println(users);
-                            userDAO.insertUser(users);
+                            userDAO.insertUser(users).join();
                             break;
                         case 2:// Reviews
-                            ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers();
-                            ArrayList<Series> seriesReviews = (ArrayList<Series>) seriesDAO.getAllSeries();
+                            ArrayList<Users> usersReviews = (ArrayList<Users>) userDAO.getAllUsers().join();
+                            ArrayList<Series> seriesReviews = (ArrayList<Series>) seriesDAO.getAllSeries().join();
                             Reviews reviews = view.insertReviewAdmin(usersReviews, seriesReviews);
-                            reviewDAO.insertReview(reviews);
+                            reviewDAO.insertReview(reviews).join();
                             break;
                         case 3:// Series
                             Series series = view.insertSeries();
-                            seriesDAO.insertSeries(series);
+                            seriesDAO.insertSeries(series).join();
                             break;
                         case 4:// Return
                             System.out.println("Return");
